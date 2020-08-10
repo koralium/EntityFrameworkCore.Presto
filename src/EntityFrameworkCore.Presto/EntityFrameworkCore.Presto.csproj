@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <Version>0.0.1</Version>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Authors>Ulimo</Authors>
+    <RepositoryUrl>https://github.com/koralium/EntityFrameworkCore.Presto</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/koralium/EntityFrameworkCore.Presto</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,6 +15,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Data.Presto\Data.Presto.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

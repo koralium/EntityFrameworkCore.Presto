@@ -286,9 +286,7 @@ namespace Data.Presto
             var uniqueName = RandomString(StatementNameLength);
             statement = $"PREPARE {uniqueName} FROM {statement}";
             StringContent body = new StringContent(statement);
-            executor.HttpClient.DefaultRequestHeaders.Add("X-Presto-User", command.PrestoConnection.ConnectionOptions.User);
-            executor.HttpClient.DefaultRequestHeaders.Add("X-Presto-Catalog", command.PrestoConnection.ConnectionOptions.Catalog);
-            executor.HttpClient.DefaultRequestHeaders.Add("X-Presto-Schema", command.PrestoConnection.ConnectionOptions.Schema);
+            AddHeaders(executor, command);
             var response = await executor.HttpClient.PostAsync($"http://{command.PrestoConnection.ConnectionOptions.Host}/v1/statement", body, executor._cancellationTokenSource.Token);
 
             var content = await response.Content.ReadAsStringAsync();
@@ -340,6 +338,18 @@ namespace Data.Presto
             return uniqueName;
         }
 
+        private static void AddHeaders(PrestoCommandExecutor commandExecutor, PrestoCommand prestoCommand)
+        {
+            commandExecutor.HttpClient.DefaultRequestHeaders.Add(PrestoHeaders.PRESTO_USER, prestoCommand.PrestoConnection.ConnectionOptions.User);
+            commandExecutor.HttpClient.DefaultRequestHeaders.Add(PrestoHeaders.PRESTO_CATALOG, prestoCommand.PrestoConnection.ConnectionOptions.Catalog);
+            commandExecutor.HttpClient.DefaultRequestHeaders.Add(PrestoHeaders.PRESTO_SCHEMA, prestoCommand.PrestoConnection.ConnectionOptions.Schema);
+
+            foreach(var extraCredential in prestoCommand.PrestoConnection.ConnectionOptions.ExtraCredentials)
+            {
+                commandExecutor.HttpClient.DefaultRequestHeaders.Add(PrestoHeaders.PRESTO_EXTRA_CREDENTIAL, $"{extraCredential.Key}={extraCredential.Value}");
+            }
+        }
+
         public static async Task<PrestoCommandExecutor> Execute(PrestoCommand prestoCommand)
         {
             PrestoCommandExecutor prestoCommandExecutor = new PrestoCommandExecutor();
@@ -365,9 +375,7 @@ namespace Data.Presto
 
             
             StringContent body = new StringContent(statement);
-            prestoCommandExecutor.HttpClient.DefaultRequestHeaders.Add("X-Presto-User", prestoCommand.PrestoConnection.ConnectionOptions.User);
-            prestoCommandExecutor.HttpClient.DefaultRequestHeaders.Add("X-Presto-Catalog", prestoCommand.PrestoConnection.ConnectionOptions.Catalog);
-            prestoCommandExecutor.HttpClient.DefaultRequestHeaders.Add("X-Presto-Schema", prestoCommand.PrestoConnection.ConnectionOptions.Schema);
+            AddHeaders(prestoCommandExecutor, prestoCommand);
             var response = await prestoCommandExecutor.HttpClient.PostAsync($"http://{prestoCommand.PrestoConnection.ConnectionOptions.Host}/v1/statement", body, prestoCommandExecutor._cancellationTokenSource.Token);
 
             

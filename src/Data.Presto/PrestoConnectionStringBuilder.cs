@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace Data.Presto
@@ -18,6 +20,7 @@ namespace Data.Presto
         private const string UserKeyword = "User";
         private const string CatalogKeyword = "Catalog";
         private const string SchemaKeyword = "Schema";
+        private const string ExtraCredentialKeyword = "ExtraCredentials";
 
         private static readonly IReadOnlyList<string> _validKeywords;
         private static readonly IReadOnlyDictionary<string, Keywords> _keywords;
@@ -26,31 +29,35 @@ namespace Data.Presto
         private string _user = defaultUser;
         private string _catalog = string.Empty;
         private string _schema = string.Empty;
+        private ImmutableList<KeyValuePair<string, string>> _extraCredentials = ImmutableList.Create<KeyValuePair<string, string>>();
 
         private enum Keywords
         {
             DataSource,
             User,
             Catalog,
-            Schema
+            Schema,
+            ExtraCredentials
         }
 
         static PrestoConnectionStringBuilder()
         {
-            var validKeywords = new string[4];
+            var validKeywords = new string[5];
             validKeywords[(int)Keywords.DataSource] = DataSourceKeyword;
             validKeywords[(int)Keywords.User] = UserKeyword;
             validKeywords[(int)Keywords.Catalog] = CatalogKeyword;
             validKeywords[(int)Keywords.Schema] = SchemaKeyword;
+            validKeywords[(int)Keywords.ExtraCredentials] = ExtraCredentialKeyword;
             _validKeywords = validKeywords;
 
-            _keywords = new Dictionary<string, Keywords>(5, StringComparer.OrdinalIgnoreCase)
+            _keywords = new Dictionary<string, Keywords>(6, StringComparer.OrdinalIgnoreCase)
             {
                 [DataSourceKeyword] = Keywords.DataSource,
                 [DataSourceNoSpaceKeyword] = Keywords.DataSource,
                 [UserKeyword] = Keywords.User,
                 [CatalogKeyword] = Keywords.Catalog,
-                [SchemaKeyword] = Keywords.Schema
+                [SchemaKeyword] = Keywords.Schema,
+                [ExtraCredentialKeyword] = Keywords.ExtraCredentials
             };
         }
 
@@ -83,6 +90,12 @@ namespace Data.Presto
         {
             get => _schema;
             set => base[SchemaKeyword] = _schema = value;
+        }
+
+        public virtual ImmutableList<KeyValuePair<string, string>> ExtraCredentials
+        {
+            get => _extraCredentials;
+            set => base[ExtraCredentialKeyword] = _extraCredentials = value;
         }
 
         internal virtual string Host
@@ -133,12 +146,40 @@ namespace Data.Presto
                     case Keywords.User:
                         User = Convert.ToString(value, CultureInfo.InvariantCulture);
                         return;
+                    case Keywords.ExtraCredentials:
+                        ParseExtraCredentials(Convert.ToString(value, CultureInfo.InvariantCulture));
+                        return;
 
                     default:
                         Debug.Assert(false, "Unexpected keyword: " + keyword);
                         return;
                 }
             }
+        }
+
+        private void ParseExtraCredentials(string extraCredentials)
+        {
+            var extraCredentialSplit = extraCredentials.Split(',');
+
+            foreach(var extraCredential in extraCredentialSplit)
+            {
+                ParseExtraCredential(extraCredential);
+            }
+            base[ExtraCredentialKeyword] = WriteExtraCredentials();
+        }
+
+        private void ParseExtraCredential(string extraCredential)
+        {
+            var seperatorIndex = extraCredential.IndexOf(':');
+
+            if(seperatorIndex < 0)
+            {
+                throw new Exception("Missing key value seperator in extra credentials");
+            }
+
+            var key = extraCredential.Substring(0, seperatorIndex);
+            var value = extraCredential.Substring(seperatorIndex + 1, extraCredential.Length - seperatorIndex - 1);
+            _extraCredentials = _extraCredentials.Add(new KeyValuePair<string, string>(key, value));
         }
 
         public override void Clear()
@@ -196,11 +237,17 @@ namespace Data.Presto
                     return Schema;
                 case Keywords.User:
                     return User;
-
+                case Keywords.ExtraCredentials:
+                    return WriteExtraCredentials();
                 default:
                     Debug.Assert(false, "Unexpected keyword: " + index);
                     return null;
             }
+        }
+
+        private string WriteExtraCredentials()
+        {
+            return string.Join(",", _extraCredentials.Select(x => $"{x.Key}:{x.Value}"));
         }
 
         private void Reset(Keywords index)
@@ -219,7 +266,9 @@ namespace Data.Presto
                 case Keywords.User:
                     _user = defaultUser;
                     return;
-
+                case Keywords.ExtraCredentials:
+                    _extraCredentials.Clear();
+                    return;
                 default:
                     Debug.Assert(false, "Unexpected keyword: " + index);
                     return;

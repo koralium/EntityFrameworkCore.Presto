@@ -45,3 +45,6 @@ modelBuilder.Entity<Customer>(customer =>
 });
 ```
 
+# Nuget Package
+
+https://www.nuget.org/packages/EntityFrameworkCore.Presto/

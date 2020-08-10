@@ -45,6 +45,7 @@ modelBuilder.Entity<Customer>(customer =>
 });
 ```
 
+
 ## Connection string settings
 
 The connection string takes the following parameters:
@@ -55,3 +56,7 @@ The connection string takes the following parameters:
 | Catalog          | Default catalog to use.                | Catalog=tpch;                             |
 | Schema           | Default schema to use under a catalog. | Schema=tiny;                              |
 | ExtraCredentials | Extra credentials to send.             | ExtraCredentials=key1:value1,key2:value2; |
+
+# Nuget Package
+
+https://www.nuget.org/packages/EntityFrameworkCore.Presto/

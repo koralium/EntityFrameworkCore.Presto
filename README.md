@@ -53,6 +53,7 @@ The connection string takes the following parameters:
 | Name             | Description                            | Example                                   |
 | ---------------- | -------------------------------------- | ----------------------------------------- |
 | Data Source      | Address to the presto server           | Data Source=localhost:8080;               |
+| User             | Name of the user                       | User=root;                                |
 | Catalog          | Default catalog to use.                | Catalog=tpch;                             |
 | Schema           | Default schema to use under a catalog. | Schema=tiny;                              |
 | ExtraCredentials | Extra credentials to send.             | ExtraCredentials=key1:value1,key2:value2; |

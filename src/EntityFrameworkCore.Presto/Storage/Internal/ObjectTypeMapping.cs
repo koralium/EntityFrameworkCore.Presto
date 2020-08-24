@@ -13,7 +13,7 @@ namespace EntityFrameworkCore.Presto.Storage.Internal
     public class ObjectTypeMapping : RelationalTypeMapping
     {
 
-        public ObjectTypeMapping([NotNullAttribute] string storeType, [NotNullAttribute] Type clrType, DbType? dbType = null, bool unicode = false, int? size = null) 
+        public ObjectTypeMapping(string storeType, Type clrType, DbType? dbType = null, bool unicode = false, int? size = null) 
             : base(storeType, clrType, dbType, unicode, size)
         {
         }

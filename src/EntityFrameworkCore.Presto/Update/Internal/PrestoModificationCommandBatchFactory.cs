@@ -11,7 +11,7 @@ namespace EntityFrameworkCore.Presto.Update.Internal
         private readonly ModificationCommandBatchFactoryDependencies _dependencies;
 
         public PrestoModificationCommandBatchFactory(
-            [NotNull] ModificationCommandBatchFactoryDependencies dependencies)
+              ModificationCommandBatchFactoryDependencies dependencies)
         {
             _dependencies = dependencies;
         }

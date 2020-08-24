@@ -47,7 +47,16 @@ namespace Data.Presto
         internal PrestoConnection PrestoConnection => _prestoConnection;
 
         public new virtual PrestoParameterCollection Parameters
-            => _parameters ??= new PrestoParameterCollection();
+        {
+            get
+            {
+                if(_parameters == null)
+                {
+                    _parameters = new PrestoParameterCollection();
+                }
+                return _parameters;
+            }
+        }
 
 
         protected override DbParameterCollection DbParameterCollection => Parameters;

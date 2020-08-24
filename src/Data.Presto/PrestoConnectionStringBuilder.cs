@@ -95,7 +95,10 @@ namespace Data.Presto
         public virtual ImmutableList<KeyValuePair<string, string>> ExtraCredentials
         {
             get => _extraCredentials;
-            set => base[ExtraCredentialKeyword] = _extraCredentials = value;
+            set {
+                _extraCredentials = value;
+                base[ExtraCredentialKeyword] = WriteExtraCredentials();
+            }
         }
 
         internal virtual string Host

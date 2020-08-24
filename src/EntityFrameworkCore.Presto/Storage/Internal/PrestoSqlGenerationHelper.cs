@@ -8,7 +8,7 @@ namespace EntityFrameworkCore.Presto.Storage.Internal
 {
     public class PrestoSqlGenerationHelper : RelationalSqlGenerationHelper
     {
-        public PrestoSqlGenerationHelper([NotNullAttribute] RelationalSqlGenerationHelperDependencies dependencies) : base(dependencies)
+        public PrestoSqlGenerationHelper(RelationalSqlGenerationHelperDependencies dependencies) : base(dependencies)
         {
         }
     }

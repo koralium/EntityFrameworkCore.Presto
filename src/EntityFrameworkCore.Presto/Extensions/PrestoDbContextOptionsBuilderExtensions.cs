@@ -11,7 +11,7 @@ namespace Microsoft.EntityFrameworkCore
     public static class PrestoDbContextOptionsBuilderExtensions
     {
         public static DbContextOptionsBuilder UsePresto(
-            [NotNull] this DbContextOptionsBuilder optionsBuilder,
+            this DbContextOptionsBuilder optionsBuilder,
             Action<PrestoDbContextOptionsBuilder> prestoOptionsAction = null)
         {
 
@@ -23,8 +23,8 @@ namespace Microsoft.EntityFrameworkCore
         }
 
         public static DbContextOptionsBuilder UsePresto(
-            [NotNull] this DbContextOptionsBuilder optionsBuilder,
-            [NotNull] string connectionString,
+              this DbContextOptionsBuilder optionsBuilder,
+              string connectionString,
             Action<PrestoDbContextOptionsBuilder> sqliteOptionsAction = null)
         {
             var extension = (PrestoOptionsExtension)GetOrCreateExtension(optionsBuilder).WithConnectionString(connectionString);

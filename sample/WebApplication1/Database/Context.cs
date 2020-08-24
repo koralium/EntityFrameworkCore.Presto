@@ -15,12 +15,20 @@ namespace WebApplication1.Database
 
         public DbSet<Customer> Customers { get; set; }
 
+        public DbSet<Order> Orders { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Customer>(o =>
             {
                 o.ToTable("customer")
                     .HasKey(x => x.Custkey);
+            });
+
+            modelBuilder.Entity<Order>(o =>
+            {
+                o.ToTable("orders")
+                    .HasKey(x => x.Orderkey);
             });
 
             base.OnModelCreating(modelBuilder);

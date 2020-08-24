@@ -39,6 +39,11 @@ namespace WebApplication1
                 return (T)getDelegate(current);
             }
 
+            if(current is ISelectExpandWrapper edmEntityObject)
+            {
+                return GetObject<T>(edmEntityObject.ToDictionary());
+            }
+
             return default(T);
         }
 
@@ -46,18 +51,26 @@ namespace WebApplication1
         {
             var enumerator = queryable.GetEnumerator();
 
-            while (enumerator.MoveNext())
+            if (enumerator.MoveNext())
             {
                 var current = enumerator.Current;
 
-                if (current is T obj)
+                //It is the wanted class directly, just return all of them
+                if(current is T obj)
                 {
                     yield return obj;
-                }
 
+                    while (enumerator.MoveNext())
+                    {
+                        yield return (T)enumerator.Current;
+                    }
+                }
+                
+                //Check if it is a selectAllAndExpand
                 var type = current.GetType();
                 if (type.Name == "SelectAllAndExpand`1")
                 {
+                    //Get the delegate to get the instance
                     if (!getDelegates.TryGetValue(type, out var getDelegate))
                     {
                         var entityProperty = type.GetProperty("Instance");
@@ -65,8 +78,37 @@ namespace WebApplication1
                         getDelegates.Add(type, getDelegate);
                     }
                     yield return (T)getDelegate(current);
+
+                    //Loop through the remaining elements just with the delegate
+                    while (enumerator.MoveNext())
+                    {
+                        yield return (T)getDelegate(enumerator.Current);
+                    }
+                }
+
+                //As a backup, check if it is a selectexpandwrapper
+                if (current is ISelectExpandWrapper edmEntityObject)
+                {
+                    yield return GetObject<T>(edmEntityObject.ToDictionary());
+
+                    while (enumerator.MoveNext())
+                    {
+                        yield return GetObject<T>(((ISelectExpandWrapper)enumerator.Current).ToDictionary());
+                    }
                 }
             }
+        }
+
+        private static T GetObject<T>(IDictionary<string, object> dict)
+        {
+            Type type = typeof(T);
+            var obj = Activator.CreateInstance(type);
+
+            foreach (var kv in dict)
+            {
+                type.GetProperty(kv.Key).SetValue(obj, kv.Value);
+            }
+            return (T)obj;
         }
 
 

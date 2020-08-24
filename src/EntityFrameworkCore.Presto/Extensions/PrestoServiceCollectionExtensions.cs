@@ -18,7 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class PrestoServiceCollectionExtensions
     {
-        public static IServiceCollection AddEntityFrameworkPresto([NotNull] this IServiceCollection serviceCollection)
+        public static IServiceCollection AddEntityFrameworkPresto(this IServiceCollection serviceCollection)
         {
             var builder = new EntityFrameworkRelationalServicesBuilder(serviceCollection)
                 .TryAdd<LoggingDefinitions, PrestoLoggingDefinitions>()

@@ -11,7 +11,7 @@ namespace EntityFrameworkCore.Presto.Query.Internal
 
         private readonly QuerySqlGeneratorDependencies _dependencies;
 
-        public PrestoQuerySqlGeneratorFactory([NotNull] QuerySqlGeneratorDependencies dependencies)
+        public PrestoQuerySqlGeneratorFactory(QuerySqlGeneratorDependencies dependencies)
         {
             _dependencies = dependencies;
         }

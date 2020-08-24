@@ -10,7 +10,7 @@ namespace EntityFrameworkCore.Presto.Storage.Internal
 {
     public class PrestoRelationalConnection : RelationalConnection
     {
-        public PrestoRelationalConnection([NotNull] RelationalConnectionDependencies dependencies) : base(dependencies)
+        public PrestoRelationalConnection(RelationalConnectionDependencies dependencies) : base(dependencies)
         {
         }
 

@@ -81,6 +81,10 @@ namespace WebApplication1
                 .EntityType
                 .HasKey(x => x.Custkey);
 
+            odataBuilder.EntitySet<Order>("Orders")
+                .EntityType
+                .HasKey(x => x.Orderkey);
+
             var model = odataBuilder.GetEdmModel();
             return model;
         }

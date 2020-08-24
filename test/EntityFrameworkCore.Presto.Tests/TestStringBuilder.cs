@@ -18,5 +18,12 @@ namespace EntityFrameworkCore.Presto.Tests
                 ImmutableList.Create(new KeyValuePair<string, string>("key", "value"), new KeyValuePair<string, string>("key2", "value2")));
             Assert.Equal(connectionString, prestoConnectionStringBuilder.ConnectionString);
         }
+
+        [Fact]
+        public void TestAddExtraCredentials()
+        {
+            var prestoConnectionStringBuilder = new PrestoConnectionStringBuilder();
+            prestoConnectionStringBuilder.ExtraCredentials = ImmutableList.Create<KeyValuePair<string, string>>(new KeyValuePair<string, string>("key1", "value1"));
+        }
     }
 }

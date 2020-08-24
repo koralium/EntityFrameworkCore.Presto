@@ -13,8 +13,8 @@ namespace EntityFrameworkCore.Presto.Storage.Internal
     {
 
         public PrestoListTypeMapping(
-            [NotNull] string storeType,
-            [NotNull] Type clrType,
+            string storeType,
+            Type clrType,
             DbType? dbType = null,
             bool unicode = false,
             int? size = null) 

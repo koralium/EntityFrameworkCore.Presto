@@ -10,7 +10,7 @@ namespace EntityFrameworkCore.Presto.Infrastructure
 {
     public class PrestoDbContextOptionsBuilder : RelationalDbContextOptionsBuilder<PrestoDbContextOptionsBuilder, PrestoOptionsExtension>
     {
-        public PrestoDbContextOptionsBuilder([NotNull] DbContextOptionsBuilder optionsBuilder) : base(optionsBuilder)
+        public PrestoDbContextOptionsBuilder(DbContextOptionsBuilder optionsBuilder) : base(optionsBuilder)
         {
         }
     }

@@ -9,7 +9,7 @@ namespace EntityFrameworkCore.Presto.Storage.Internal
 {
     public class PrestoLongTypeMapping : LongTypeMapping
     {
-        public PrestoLongTypeMapping([NotNullAttribute] string storeType, DbType? dbType = null) : base(storeType, dbType)
+        public PrestoLongTypeMapping(string storeType, DbType? dbType = null) : base(storeType, dbType)
         {
         }
 

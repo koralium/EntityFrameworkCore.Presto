@@ -12,12 +12,12 @@ namespace EntityFrameworkCore.Presto.Update.Internal
         {
         }
 
-        protected override void AppendIdentityWhereCondition([NotNullAttribute] StringBuilder commandStringBuilder, [NotNullAttribute] ColumnModification columnModification)
+        protected override void AppendIdentityWhereCondition(StringBuilder commandStringBuilder, ColumnModification columnModification)
         {
             throw new NotImplementedException();
         }
 
-        protected override void AppendRowsAffectedWhereCondition([NotNullAttribute] StringBuilder commandStringBuilder, int expectedRowsAffected)
+        protected override void AppendRowsAffectedWhereCondition(StringBuilder commandStringBuilder, int expectedRowsAffected)
         {
             throw new NotImplementedException();
         }

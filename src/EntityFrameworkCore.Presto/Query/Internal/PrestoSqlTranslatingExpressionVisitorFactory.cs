@@ -18,7 +18,7 @@ namespace EntityFrameworkCore.Presto.Query.Internal
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
         public PrestoSqlTranslatingExpressionVisitorFactory(
-            [NotNull] RelationalSqlTranslatingExpressionVisitorDependencies dependencies)
+              RelationalSqlTranslatingExpressionVisitorDependencies dependencies)
         {
             _dependencies = dependencies;
         }

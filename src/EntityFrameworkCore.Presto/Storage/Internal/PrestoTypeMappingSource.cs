@@ -19,8 +19,8 @@ namespace EntityFrameworkCore.Presto.Storage.Internal
                 { typeof(long), new LongTypeMapping("bigint", System.Data.DbType.Int64) }
             };
 
-        public PrestoTypeMappingSource([NotNullAttribute] TypeMappingSourceDependencies dependencies, 
-            [NotNullAttribute] RelationalTypeMappingSourceDependencies relationalDependencies) : base(dependencies, relationalDependencies)
+        public PrestoTypeMappingSource(TypeMappingSourceDependencies dependencies, 
+            RelationalTypeMappingSourceDependencies relationalDependencies) : base(dependencies, relationalDependencies)
         {
         }
 

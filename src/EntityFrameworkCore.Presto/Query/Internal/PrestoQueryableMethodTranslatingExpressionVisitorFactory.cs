@@ -13,8 +13,8 @@ namespace EntityFrameworkCore.Presto.Query.Internal
         private readonly RelationalQueryableMethodTranslatingExpressionVisitorDependencies _relationalDependencies;
 
         public PrestoQueryableMethodTranslatingExpressionVisitorFactory(
-            [NotNull] QueryableMethodTranslatingExpressionVisitorDependencies dependencies,
-            [NotNull] RelationalQueryableMethodTranslatingExpressionVisitorDependencies relationalDependencies)
+              QueryableMethodTranslatingExpressionVisitorDependencies dependencies,
+              RelationalQueryableMethodTranslatingExpressionVisitorDependencies relationalDependencies)
         {
             _dependencies = dependencies;
             _relationalDependencies = relationalDependencies;

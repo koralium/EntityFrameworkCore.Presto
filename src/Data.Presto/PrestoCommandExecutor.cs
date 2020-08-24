@@ -369,7 +369,7 @@ namespace Data.Presto
                     values.Add(prestoCommand.Parameters[i].GenerateSqlValue());
                 }
 
-                statement = $"{newStatement} {string.Join(',', values)}";
+                statement = $"{newStatement} {string.Join(",", values)}";
             }
 
 

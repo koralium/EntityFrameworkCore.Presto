@@ -17,7 +17,17 @@ namespace EntityFrameworkCore.Presto.Infrastructure.Internal
             
         }
 
-        public override DbContextOptionsExtensionInfo Info => _info ??= new ExtensionInfo(this);
+        public override DbContextOptionsExtensionInfo Info
+        {
+            get
+            {
+                if(_info == null)
+                {
+                    _info = new ExtensionInfo(this);
+                }
+                return _info;
+            }
+        }
 
         public override void ApplyServices(IServiceCollection services)
         {

@@ -9,7 +9,7 @@ namespace EntityFrameworkCore.Presto.Storage.Internal
 {
     public class PrestoStringTypeMapping : StringTypeMapping
     {
-        public PrestoStringTypeMapping([NotNullAttribute] string storeType, DbType? dbType = null, bool unicode = false, int? size = null) : base(storeType, dbType, unicode, size)
+        public PrestoStringTypeMapping(string storeType, DbType? dbType = null, bool unicode = false, int? size = null) : base(storeType, dbType, unicode, size)
         {
         }
 

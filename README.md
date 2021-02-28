@@ -99,11 +99,31 @@ The connection string takes the following parameters:
 | Password         | Password for the user                  | Password=test;                            |
 | Ssl		       | Https or http protocol				 	| Ssl=true;									|			
 
-# SSL Traffic
+## SSL Traffic
 
 If the SSL connection string option is left out, the ADO.Net provider tries to figure out the protocol by itself.
 It first tries https but if that fails it tests http. This is saved as long as the application is running.
 But for better first time performance if one is not using https is to set ssl=false in the connection string.
+
+## Write Json
+
+The ADO.NET DbDataReader has support to write a row directly to an Utf8JsonWriter.
+This can be helpful if one is setting up an OData proxy in front of Presto for instance.
+
+Example usage:
+
+```
+var writer = new Utf8JsonWriter(stream);
+var prestoReader = (PrestoDataReader)reader;
+
+writer.WriteStartArray();
+while (prestoReader.Read())
+{
+  prestoReader.ToJson(writer);
+}
+writer.WriteEndArray();
+writer.Flush();
+```
 
 # Nuget Package
 

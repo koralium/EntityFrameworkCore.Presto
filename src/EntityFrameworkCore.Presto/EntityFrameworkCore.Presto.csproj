@@ -2,12 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>0.0.2-alpha3</Version>
-    <PackageVersion>0.0.2-alpha3</PackageVersion>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Authors>Ulimo</Authors>
-    <RepositoryUrl>https://github.com/koralium/EntityFrameworkCore.Presto</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/koralium/EntityFrameworkCore.Presto</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>

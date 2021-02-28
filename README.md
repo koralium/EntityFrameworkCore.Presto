@@ -66,6 +66,23 @@ while(reader.Read())
 }
 ```
 
+## Supported data types
+
+* Boolean
+* Tinyint
+* Smallint
+* Integer
+* BigInt
+* Real
+* Double
+* Decimal
+* varchar
+* char
+* Timestamp / Date
+* Array
+* Row
+* UUID
+
 
 ## Connection string settings
 

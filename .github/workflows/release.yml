@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - v*
+      
+jobs:
+  publishNuget:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Extract tag name
+      id: tag
+      run: echo ::set-output name=VERSION::$(echo ${GITHUB_REF##*/v})
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.200
+    - name: Update project version
+      uses: roryprimrose/set-vs-sdk-project-version@v1
+      with:
+        version: ${{ steps.tag.outputs.VERSION }}
+    # Publish Data.Presto
+    - name: Publish Data.Presto
+      id: publish_nuget_data_presto
+      uses: rohith/publish-nuget@v2
+      with:
+        PROJECT_FILE_PATH: src/Data.Presto/Data.Presto.csproj
+        PACKAGE_NAME: Data.Presto
+        NUGET_KEY: ${{ secrets.NUGET_KEY }}
+        TAG_COMMIT: false
+        VERSION_STATIC: ${{ steps.tag.outputs.VERSION }}
+    # Publish EntityFrameworkCore.Presto
+    - name: Publish EntityFrameworkCore.Presto
+      id: publish_nuget_entityframeworkcore_presto
+      uses: rohith/publish-nuget@v2
+      with:
+        PROJECT_FILE_PATH: src/EntityFrameworkCore.Presto/EntityFrameworkCore.Presto.csproj
+        PACKAGE_NAME: EntityFrameworkCore.Presto
+        NUGET_KEY: ${{ secrets.NUGET_KEY }}
+        TAG_COMMIT: false
+        VERSION_STATIC: ${{ steps.tag.outputs.VERSION }}

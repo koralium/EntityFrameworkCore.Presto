@@ -1,4 +1,4 @@
-# Presto Entity Framework Core Provider
+# Presto Entity Framework Core/ADO.Net Provider
 
 This provider is in a very early stage, but should support most queries.
 
@@ -43,6 +43,27 @@ modelBuilder.Entity<Customer>(customer =>
 
     customer.Property(x => x.Array).IsArrayType();
 });
+```
+
+#ADO.NET
+
+The ADO.NET provider is located in the Data.Presto package.
+
+Example usage:
+
+```
+using var connection = new PrestoConnection()
+{
+  ConnectionString = "Data Source=localhost:8080; Catalog=tpch; Schema=tiny; Trino=true;"
+};
+using var command = connection.CreateCommand();
+command.CommandText = "SELECT * FROM orders";
+using var reader = command.ExecuteReader();
+
+while(reader.Read())
+{
+  // Read columns
+}
 ```
 
 

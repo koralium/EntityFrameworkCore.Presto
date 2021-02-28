@@ -14,11 +14,6 @@ namespace Data.Presto.Decoders
 
         protected abstract string DataTypeName { get; }
 
-        public override void CopyUtf8Value(in Stream stream, in int index)
-        {
-            throw new NotImplementedException();
-        }
-
         public override string GetDataTypeName()
         {
             return DataTypeName;
@@ -75,6 +70,11 @@ namespace Data.Presto.Decoders
         public override Type GetFieldType()
         {
             return typeof(T);
+        }
+
+        public override void AppendOffset()
+        {
+            Values.Add(null);
         }
     }
 }

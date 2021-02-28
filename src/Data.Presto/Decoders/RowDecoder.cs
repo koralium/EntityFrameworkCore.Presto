@@ -27,11 +27,6 @@ namespace Data.Presto.Decoders
             _names = columns.Select(x => x.Name).ToArray();
         }
 
-        public override void CopyUtf8Value(in Stream stream, in int index)
-        {
-            throw new NotImplementedException();
-        }
-
         public override string GetDataTypeName()
         {
             return "row";
@@ -93,7 +88,7 @@ namespace Data.Presto.Decoders
         {
             if (utf8JsonReader.TokenType == JsonTokenType.Null)
             {
-                isNull.Add(true);
+                AppendOffset();
                 return;
             }
 
@@ -122,6 +117,33 @@ namespace Data.Presto.Decoders
 
         internal override void NewBatch(Memory<byte> memory)
         {
+        }
+
+        public override void WriteJson(in int index, in Utf8JsonWriter jsonWriter)
+        {
+            if (IsDbNull(index))
+            {
+                jsonWriter.WriteNullValue();
+            }
+            else
+            {
+                jsonWriter.WriteStartObject();
+                for(int i = 0; i < _names.Length; i++)
+                {
+                    jsonWriter.WritePropertyName(_names[i]);
+                    _columnDecoders[i].WriteJson(index, jsonWriter);
+                }
+                jsonWriter.WriteEndObject();
+            }
+        }
+
+        public override void AppendOffset()
+        {
+            isNull.Add(true);
+            for (int i = 0; i < _columnDecoders.Length; i++)
+            {
+                _columnDecoders[i].AppendOffset();
+            }
         }
     }
 }

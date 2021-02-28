@@ -8,29 +8,9 @@ namespace Data.Presto.Decoders
 {
     class BooleanDecoder : ColumnDecoder
     {
-        private static readonly byte[] nullBytes = Encoding.UTF8.GetBytes("null");
-        private static readonly byte[] trueBytes = Encoding.UTF8.GetBytes("true");
-        private static readonly byte[] falseBytes = Encoding.UTF8.GetBytes("false");
         private readonly List<bool?> values = new List<bool?>();
 
         public override int RowCount => values.Count;
-
-        public override void CopyUtf8Value(in Stream stream, in int index)
-        {
-            var val = values[index];
-            if (val == null)
-            {
-                stream.Write(nullBytes.AsSpan());
-            }
-            if (GetBoolean(index))
-            {
-                stream.Write(trueBytes.AsSpan());
-            }
-            else
-            {
-                stream.Write(falseBytes.AsSpan());
-            }
-        }
 
         public override string GetDataTypeName()
         {
@@ -94,6 +74,24 @@ namespace Data.Presto.Decoders
         public override Type GetFieldType()
         {
             return typeof(bool);
+        }
+
+        public override void WriteJson(in int index, in Utf8JsonWriter jsonWriter)
+        {
+            var val = values[index];
+            if (!val.HasValue)
+            {
+                jsonWriter.WriteNullValue();
+            }
+            else
+            {
+                jsonWriter.WriteBooleanValue(val.Value);
+            }
+        }
+
+        public override void AppendOffset()
+        {
+            values.Add(null);
         }
     }
 }

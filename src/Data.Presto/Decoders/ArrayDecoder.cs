@@ -30,11 +30,6 @@ namespace Data.Presto.Decoders
             _listType = typeof(List<>).MakeGenericType(_innerDecoder.GetFieldType());
         }
 
-        public override void CopyUtf8Value(in Stream stream, in int index)
-        {
-            throw new NotImplementedException();
-        }
-
         public override string GetDataTypeName() => $"array({_innerDecoder.GetDataTypeName()})";
 
         public override object GetFieldValue(in int index, Type type)
@@ -123,6 +118,33 @@ namespace Data.Presto.Decoders
         public override Type GetFieldType()
         {
             return _listType;
+        }
+
+        public override void WriteJson(in int index, in Utf8JsonWriter jsonWriter)
+        {
+            var interval = intervals[index];
+
+            if(interval.isNull)
+            {
+                jsonWriter.WriteNullValue();
+            }
+            else
+            {
+                jsonWriter.WriteStartArray();
+                for (int i = interval.startIndex; i < interval.endIndex; i++)
+                {
+                    _innerDecoder.WriteJson(i, jsonWriter);
+                }
+                jsonWriter.WriteEndArray();
+            }
+        }
+
+        public override void AppendOffset()
+        {
+            intervals.Add(new ListInterval()
+            {
+                isNull = true
+            });
         }
     }
 }

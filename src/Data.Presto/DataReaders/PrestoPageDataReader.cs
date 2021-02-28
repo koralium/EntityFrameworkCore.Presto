@@ -182,28 +182,15 @@ namespace Data.Presto.DataReaders
             return _columnDecoders[ordinal].GetFieldValue<T>(currentIndex);
         }
 
-        public void ToJsonStream(Stream stream)
+        public void ToJson(Utf8JsonWriter jsonWriter)
         {
-            stream.Write(JsonWriteUtils.StartObjectCharacter);
+            jsonWriter.WriteStartObject();
             for (int i = 0; i < _columnNames.Length; i++)
             {
-                //Write property name
-                stream.Write(JsonWriteUtils.Quote);
-                stream.Write(Encoding.UTF8.GetBytes(_columnNames[i]));
-                stream.Write(JsonWriteUtils.Quote);
-
-                // Colon delimeter between name and value
-                stream.Write(JsonWriteUtils.Colon);
-
-                _columnDecoders[i].CopyUtf8Value(stream, currentIndex);
-
-                if ((i + 1) < _columnNames.Length)
-                {
-                    //Add comma between values
-                    stream.Write(JsonWriteUtils.Comma);
-                }
+                jsonWriter.WritePropertyName(_columnNames[i]);
+                _columnDecoders[i].WriteJson(currentIndex, jsonWriter);
             }
-            stream.Write(JsonWriteUtils.EndObjectCharacter);
+            jsonWriter.WriteEndObject();
         }
 
         public override bool NextResult()

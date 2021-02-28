@@ -45,7 +45,7 @@ modelBuilder.Entity<Customer>(customer =>
 });
 ```
 
-#ADO.NET
+# ADO.NET
 
 The ADO.NET provider is located in the Data.Presto package.
 

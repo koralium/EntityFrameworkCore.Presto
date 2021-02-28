@@ -1,12 +1,13 @@
-﻿using Data.Presto.Models;
-using Newtonsoft.Json;
+﻿using Data.Presto.Client;
+using Data.Presto.DataReaders;
+using Data.Presto.Internal;
+using Data.Presto.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Diagnostics;
-using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Data.Presto
@@ -15,10 +16,11 @@ namespace Data.Presto
     {
         private PrestoParameterCollection _parameters;
 
-        private PrestoConnection _prestoConnection;
-        private HttpClient _httpClient = new HttpClient();
         public override string CommandText { get; set; }
         public override int CommandTimeout { get; set; }
+
+        internal DbDataReader DataReader { get; private set; }
+
         public override CommandType CommandType
         {
             get => CommandType.Text;
@@ -30,27 +32,28 @@ namespace Data.Presto
                 }
             }
         }
-        public override bool DesignTimeVisible { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override UpdateRowSource UpdatedRowSource { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        protected override DbConnection DbConnection 
+
+        public override bool DesignTimeVisible { get; set; }
+        public override UpdateRowSource UpdatedRowSource { get; set; }
+        protected override DbConnection DbConnection
         {
             get
             {
-                return _prestoConnection;
+                return PrestoConnection;
             }
             set
             {
-                _prestoConnection = (PrestoConnection)value;
+                PrestoConnection = (PrestoConnection)value;
             }
         }
 
-        internal PrestoConnection PrestoConnection => _prestoConnection;
+        internal PrestoConnection PrestoConnection { get; private set; }
 
         public new virtual PrestoParameterCollection Parameters
         {
             get
             {
-                if(_parameters == null)
+                if (_parameters == null)
                 {
                     _parameters = new PrestoParameterCollection();
                 }
@@ -58,24 +61,35 @@ namespace Data.Presto
             }
         }
 
-
         protected override DbParameterCollection DbParameterCollection => Parameters;
 
         protected override DbTransaction DbTransaction { get; set; }
 
         public override void Cancel()
+            => Dispose(true);
+
+        protected override void Dispose(bool disposing)
         {
-            throw new NotImplementedException();
+            if (disposing)
+            {
+                DataReader?.Dispose();
+                
+            }
         }
 
         public override int ExecuteNonQuery()
         {
-            throw new NotImplementedException();
+            using var reader = ExecuteDbDataReader(CommandBehavior.Default);
+            return reader.RecordsAffected;
         }
 
         public override object ExecuteScalar()
         {
-            throw new NotImplementedException();
+            using var reader = ExecuteDbDataReader(CommandBehavior.Default);
+
+            return reader.Read()
+                ? reader.GetValue(0)
+                : null;
         }
 
         public override void Prepare()
@@ -90,7 +104,31 @@ namespace Data.Presto
 
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
         {
-            return new PrestoDataReader(PrestoCommandExecutor.Execute(this).Result);
+            var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(CommandTimeout));
+            return AsyncHelper.RunSync(() => ExecuteDbDataReaderAsync(behavior, tokenSource.Token));
+        }
+
+        protected override async Task<DbDataReader> ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+        {
+            //Check so no other data reader has been open with this command
+            if (DataReader != null)
+            {
+                throw new InvalidOperationException("Another data reader has already been opened");
+            }
+
+            var client = new PrestoClient(PrestoConnection.ConnectionOptions);
+
+            var sqlQuery = ParameterUtils.DeparameterizeStatement(this);
+            var decodeResult = await client.Query(sqlQuery, cancellationToken);
+
+            if(decodeResult.State == Models.PrestoState.Failed)
+            {
+                throw new InvalidOperationException(decodeResult.ErrorMessage);
+            }
+
+            DataReader = new PrestoDataReader(decodeResult, client, PrestoConnection.ConnectionOptions.Streaming);
+
+            return DataReader;
         }
     }
 }

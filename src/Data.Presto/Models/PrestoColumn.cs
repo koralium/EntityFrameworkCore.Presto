@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Data.Presto.Models
 {
-    public class PrestoColumn
+    class PrestoColumn
     {
-        public string Type { get; set; }
-
         public string Name { get; set; }
+
+        public PrestoType PrestoType { get; set; }
     }
 }

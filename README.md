@@ -11,7 +11,7 @@ You use the provider as any other entity framework core provider:
 ```
 services.AddDbContext<Context>(o =>
 {
-    o.UsePresto("Data Source=localhost:8080; Catalog=tpch; Schema=tiny;");
+    o.UsePresto("Data Source=localhost:8080; Catalog=tpch; Schema=tiny; Trino=true;");
 });
 ```
 
@@ -57,6 +57,8 @@ The connection string takes the following parameters:
 | Catalog          | Default catalog to use.                | Catalog=tpch;                             |
 | Schema           | Default schema to use under a catalog. | Schema=tiny;                              |
 | ExtraCredentials | Extra credentials to send.             | ExtraCredentials=key1:value1,key2:value2; |
+| Trino            | Use trino headers (required for trino) | Trino=true;                               |
+| Password         | Password for the user                  | Password=test;                            |
 
 # Nuget Package
 

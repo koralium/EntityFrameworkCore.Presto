@@ -52,5 +52,26 @@ namespace EntityFrameworkCore.Presto.Query.Internal
             
             return tableExpression;
         }
+
+        protected override void GenerateLimitOffset(SelectExpression selectExpression)
+        {
+            if (selectExpression.Limit != null
+                || selectExpression.Offset != null)
+            {
+                Sql.AppendLine()
+                    .Append("LIMIT ");
+
+                Visit(
+                    selectExpression.Limit
+                    ?? new SqlConstantExpression(Expression.Constant(-1), selectExpression.Offset.TypeMapping));
+
+                if (selectExpression.Offset != null)
+                {
+                    Sql.Append(" OFFSET ");
+
+                    Visit(selectExpression.Offset);
+                }
+            }
+        }
     }
 }

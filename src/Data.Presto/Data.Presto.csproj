@@ -1,27 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.0.2-alpha3</Version>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Authors>Ulimo</Authors>
-    <PackageVersion>0.0.2-alpha3</PackageVersion>
-    <Company />
-    <RepositoryUrl>https://github.com/koralium/EntityFrameworkCore.Presto</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/koralium/EntityFrameworkCore.Presto</PackageProjectUrl>
+    <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
-    <PackageReference Include="System.Threading.Channels" Version="4.7.1" />
+    <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
+    <PackageReference Include="System.Text.Json" Version="5.0.1" />
+    <PackageReference Include="System.Threading.Channels" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
+    <None Update="Properties\Resources.Designer.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.Designer.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

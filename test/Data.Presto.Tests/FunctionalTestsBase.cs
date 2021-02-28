@@ -1,11 +1,13 @@
 ﻿using Data.Presto.DataReaders;
 using DotNet.Testcontainers.Containers.Builders;
 using DotNet.Testcontainers.Containers.Modules;
+using DotNet.Testcontainers.Containers.OutputConsumers;
 using DotNet.Testcontainers.Containers.WaitStrategies;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,15 +16,19 @@ namespace Data.Presto.Tests
     public class FunctionalTestsBase
     {
         private TestcontainersContainer testContainer;
+        private MemoryStream memoryStream;
         [OneTimeSetUp]
         public async Task Setup()
         {
+            memoryStream = new MemoryStream();
             var testcontainersBuilder = new TestcontainersBuilder<TestcontainersContainer>()
               .WithImage("trinodb/trino")
               .WithName("trino")
               .WithPortBinding(8080)
-              .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(8080));
+              .WithOutputConsumer(Consume.RedirectStdoutAndStderrToStream(memoryStream, memoryStream))
+              .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged(memoryStream, "======== SERVER STARTED ========"));
 
+            
             testContainer = testcontainersBuilder.Build();
 
             try
@@ -40,6 +46,7 @@ namespace Data.Presto.Tests
         [OneTimeTearDown]
         public async Task Teardown()
         {
+            await memoryStream.DisposeAsync();
             await testContainer.StopAsync();
             await testContainer.DisposeAsync();
         }

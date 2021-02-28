@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication1", "sample\W
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFrameworkCore.Presto.Tests", "test\EntityFrameworkCore.Presto.Tests\EntityFrameworkCore.Presto.Tests.csproj", "{3CC46AB4-9E72-4D77-8234-92315CF1CE67}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data.Presto.Tests", "test\Data.Presto.Tests\Data.Presto.Tests.csproj", "{7BD71EF2-8B3D-402C-AB4E-48546ECEB0B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{3CC46AB4-9E72-4D77-8234-92315CF1CE67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3CC46AB4-9E72-4D77-8234-92315CF1CE67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3CC46AB4-9E72-4D77-8234-92315CF1CE67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BD71EF2-8B3D-402C-AB4E-48546ECEB0B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BD71EF2-8B3D-402C-AB4E-48546ECEB0B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BD71EF2-8B3D-402C-AB4E-48546ECEB0B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BD71EF2-8B3D-402C-AB4E-48546ECEB0B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,6 +61,7 @@ Global
 		{F673AA6F-1EF7-4DBF-AB8F-FF6D3FDCD379} = {3FDD4CC4-65FC-42FD-8D73-9A8F8632F5C3}
 		{0354CB28-F4E7-4142-B07B-B84C0ECA94F2} = {2897E4DB-E869-4DF0-92D6-EA4DFCB0F636}
 		{3CC46AB4-9E72-4D77-8234-92315CF1CE67} = {3FDD4CC4-65FC-42FD-8D73-9A8F8632F5C3}
+		{7BD71EF2-8B3D-402C-AB4E-48546ECEB0B7} = {3FDD4CC4-65FC-42FD-8D73-9A8F8632F5C3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A202B88-592D-4D7A-BDD8-2BAB190FD345}

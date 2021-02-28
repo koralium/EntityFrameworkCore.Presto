@@ -30,7 +30,9 @@ namespace Data.Presto.Decoders
             throw new NotSupportedException($"Column with ordinal {Ordinal} and type {GetDataTypeName()} cant get a string value");
         }
 
-        public abstract void CopyUtf8Value(in Stream stream, in int index);
+        public abstract void AppendOffset();
+
+        public abstract void WriteJson(in int index, in Utf8JsonWriter jsonWriter);
 
         public abstract object GetFieldValue(in int index, Type type);
 

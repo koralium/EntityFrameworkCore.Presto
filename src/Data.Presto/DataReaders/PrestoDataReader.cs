@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -302,14 +303,11 @@ namespace Data.Presto.DataReaders
             }
         }
 
-        /// <summary>
-        /// Takes the current row and writes it as a json object to a stream
-        /// </summary>
-        public void ToJsonStream(Stream stream)
+        public void ToJson(Utf8JsonWriter jsonWriter)
         {
             if (_currentReader == _dataReader)
             {
-                _dataReader.ToJsonStream(stream);
+                _dataReader.ToJson(jsonWriter);
                 return;
             }
             throw new InvalidOperationException(Resources.NoRead);

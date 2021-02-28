@@ -44,5 +44,18 @@ namespace Data.Presto.Decoders
         {
             return GetTVal(index);
         }
+
+        public override void WriteJson(in int index, in Utf8JsonWriter jsonWriter)
+        {
+            var val = Values[index];
+            if (!val.HasValue)
+            {
+                jsonWriter.WriteNullValue();
+            }
+            else
+            {
+                jsonWriter.WriteNumberValue(val.Value);
+            }
+        }
     }
 }

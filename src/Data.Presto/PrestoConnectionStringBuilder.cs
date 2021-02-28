@@ -21,6 +21,9 @@ namespace Data.Presto
         private const string CatalogKeyword = "Catalog";
         private const string SchemaKeyword = "Schema";
         private const string ExtraCredentialKeyword = "ExtraCredentials";
+        private const string StreamingKeyword = "Streaming";
+        private const string TrinoKeyword = "Trino";
+        private const string PasswordKeyword = "Password";
 
         private static readonly IReadOnlyList<string> _validKeywords;
         private static readonly IReadOnlyDictionary<string, Keywords> _keywords;
@@ -29,6 +32,9 @@ namespace Data.Presto
         private string _user = defaultUser;
         private string _catalog = string.Empty;
         private string _schema = string.Empty;
+        private bool _streaming = true;
+        private bool _trino = false;
+        private string _password = string.Empty;
         private ImmutableList<KeyValuePair<string, string>> _extraCredentials = ImmutableList.Create<KeyValuePair<string, string>>();
 
         private enum Keywords
@@ -37,27 +43,36 @@ namespace Data.Presto
             User,
             Catalog,
             Schema,
-            ExtraCredentials
+            ExtraCredentials,
+            Streaming,
+            Trino,
+            Password
         }
 
         static PrestoConnectionStringBuilder()
         {
-            var validKeywords = new string[5];
+            var validKeywords = new string[8];
             validKeywords[(int)Keywords.DataSource] = DataSourceKeyword;
             validKeywords[(int)Keywords.User] = UserKeyword;
             validKeywords[(int)Keywords.Catalog] = CatalogKeyword;
             validKeywords[(int)Keywords.Schema] = SchemaKeyword;
             validKeywords[(int)Keywords.ExtraCredentials] = ExtraCredentialKeyword;
+            validKeywords[(int)Keywords.Streaming] = StreamingKeyword;
+            validKeywords[(int)Keywords.Trino] = TrinoKeyword;
+            validKeywords[(int)Keywords.Password] = PasswordKeyword;
             _validKeywords = validKeywords;
 
-            _keywords = new Dictionary<string, Keywords>(6, StringComparer.OrdinalIgnoreCase)
+            _keywords = new Dictionary<string, Keywords>(9, StringComparer.OrdinalIgnoreCase)
             {
                 [DataSourceKeyword] = Keywords.DataSource,
                 [DataSourceNoSpaceKeyword] = Keywords.DataSource,
                 [UserKeyword] = Keywords.User,
                 [CatalogKeyword] = Keywords.Catalog,
                 [SchemaKeyword] = Keywords.Schema,
-                [ExtraCredentialKeyword] = Keywords.ExtraCredentials
+                [ExtraCredentialKeyword] = Keywords.ExtraCredentials,
+                [StreamingKeyword] = Keywords.Streaming,
+                [TrinoKeyword] = Keywords.Trino,
+                [PasswordKeyword] = Keywords.Password
             };
         }
 
@@ -95,10 +110,29 @@ namespace Data.Presto
         public virtual ImmutableList<KeyValuePair<string, string>> ExtraCredentials
         {
             get => _extraCredentials;
-            set {
+            set
+            {
                 _extraCredentials = value;
                 base[ExtraCredentialKeyword] = WriteExtraCredentials();
             }
+        }
+
+        public virtual bool Streaming
+        {
+            get => _streaming;
+            set => base[StreamingKeyword] = _streaming = value;
+        }
+
+        public virtual bool Trino
+        {
+            get => _trino;
+            set => base[TrinoKeyword] = _trino = value;
+        }
+
+        public virtual string Password
+        {
+            get => _password;
+            set => base[PasswordKeyword] = _password = value;
         }
 
         internal virtual string Host
@@ -152,7 +186,15 @@ namespace Data.Presto
                     case Keywords.ExtraCredentials:
                         ParseExtraCredentials(Convert.ToString(value, CultureInfo.InvariantCulture));
                         return;
-
+                    case Keywords.Streaming:
+                        Streaming = Convert.ToBoolean(value, CultureInfo.InvariantCulture);
+                        return;
+                    case Keywords.Trino:
+                        Trino = Convert.ToBoolean(value, CultureInfo.InvariantCulture);
+                        return;
+                    case Keywords.Password:
+                        Password = Convert.ToString(value, CultureInfo.InvariantCulture);
+                        return;
                     default:
                         Debug.Assert(false, "Unexpected keyword: " + keyword);
                         return;
@@ -164,7 +206,7 @@ namespace Data.Presto
         {
             var extraCredentialSplit = extraCredentials.Split(',');
 
-            foreach(var extraCredential in extraCredentialSplit)
+            foreach (var extraCredential in extraCredentialSplit)
             {
                 ParseExtraCredential(extraCredential);
             }
@@ -175,7 +217,7 @@ namespace Data.Presto
         {
             var seperatorIndex = extraCredential.IndexOf(':');
 
-            if(seperatorIndex < 0)
+            if (seperatorIndex < 0)
             {
                 throw new Exception("Missing key value seperator in extra credentials");
             }
@@ -242,6 +284,12 @@ namespace Data.Presto
                     return User;
                 case Keywords.ExtraCredentials:
                     return WriteExtraCredentials();
+                case Keywords.Streaming:
+                    return Streaming;
+                case Keywords.Trino:
+                    return Trino;
+                case Keywords.Password:
+                    return Password;
                 default:
                     Debug.Assert(false, "Unexpected keyword: " + index);
                     return null;
@@ -271,6 +319,15 @@ namespace Data.Presto
                     return;
                 case Keywords.ExtraCredentials:
                     _extraCredentials.Clear();
+                    return;
+                case Keywords.Streaming:
+                    _streaming = true;
+                    return;
+                case Keywords.Trino:
+                    _trino = false;
+                    return;
+                case Keywords.Password:
+                    _password = string.Empty;
                     return;
                 default:
                     Debug.Assert(false, "Unexpected keyword: " + index);

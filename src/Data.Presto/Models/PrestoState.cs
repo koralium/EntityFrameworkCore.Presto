@@ -4,14 +4,14 @@ using System.Text;
 
 namespace Data.Presto.Models
 {
-    public enum PrestoState
+    enum PrestoState
     {
-        QUEUED,
-        RUNNING,
-        PLANNING,
-        STARTING,
-        FINISHED,
-        FAILED,
-        FINISHING
+        Queued,
+        Planning,
+        Starting,
+        Running,
+        Finished,
+        Canceled,
+        Failed
     }
 }

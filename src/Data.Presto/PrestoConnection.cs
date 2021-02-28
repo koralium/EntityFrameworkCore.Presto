@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
+using System.Text;
 
 namespace Data.Presto
 {
     public class PrestoConnection : DbConnection
     {
-        private string _connectionString = string.Empty;
         private ConnectionState _state;
+        private string _connectionString = string.Empty;
         private readonly List<WeakReference<PrestoCommand>> _commands = new List<WeakReference<PrestoCommand>>();
 
         internal PrestoConnectionStringBuilder ConnectionOptions { get; set; }
 
-        public override string ConnectionString 
+        public override string ConnectionString
         {
             get => _connectionString;
             set
             {
-                if(State != ConnectionState.Closed)
+                if (State != ConnectionState.Closed)
                 {
                     throw new InvalidOperationException();
                 }
@@ -28,7 +29,7 @@ namespace Data.Presto
             }
         }
 
-        public override string Database => throw new NotImplementedException();
+        public override string Database => ConnectionOptions.Catalog;
 
         public override string DataSource => ConnectionOptions.DataSource;
 
@@ -38,10 +39,18 @@ namespace Data.Presto
 
         public override void ChangeDatabase(string databaseName)
         {
-            throw new NotImplementedException();
+            ConnectionOptions.Catalog = databaseName;
         }
 
-        protected override DbProviderFactory DbProviderFactory => PrestoFactory.Instance;
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Close();
+            }
+
+            base.Dispose(disposing);
+        }
 
         public override void Close()
         {
@@ -57,6 +66,7 @@ namespace Data.Presto
                 {
                     // NB: Calls RemoveCommand()
                     command.Dispose();
+                    _commands.RemoveAt(i);
                 }
                 else
                 {
@@ -67,16 +77,6 @@ namespace Data.Presto
             Debug.Assert(_commands.Count == 0);
             _state = ConnectionState.Closed;
             OnStateChange(new StateChangeEventArgs(ConnectionState.Open, ConnectionState.Closed));
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                Close();
-            }
-
-            base.Dispose(disposing);
         }
 
         public override void Open()
@@ -103,12 +103,14 @@ namespace Data.Presto
 
         protected override DbCommand CreateDbCommand()
         {
-            return new PrestoCommand
+            var command = new PrestoCommand
             {
                 Connection = this,
                 CommandTimeout = DefaultTimeout,
                 Transaction = Transaction
             };
+            _commands.Add(new WeakReference<PrestoCommand>(command));
+            return command;
         }
 
         public virtual int DefaultTimeout { get; set; } = 120;

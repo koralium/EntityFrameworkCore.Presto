@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Data.Presto
+namespace Data.Presto.Client
 {
-    public static class PrestoHeaders
+    internal static class PrestoHeaders
     {
         public const string PRESTO_USER = "X-Presto-User";
         public const string PRESTO_SOURCE = "X-Presto-Source";

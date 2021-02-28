@@ -17,10 +17,10 @@ namespace WebApplication1.Controllers
             _oDataDbContext = oDataDbContext;
         }
 
-        [EnableQuery(PageSize = 2000)]
+        [EnableQuery(PageSize = 100)]
         public IEnumerable<Customer> Get(ODataQueryOptions<Customer> queryOptions)
         {
-            return queryOptions.ApplyTo(_oDataDbContext.Customers).ToEnumerable<Customer>();
+            return _oDataDbContext.Customers;
         }
 
         [EnableQuery]

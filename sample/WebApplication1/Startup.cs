@@ -37,7 +37,7 @@ namespace WebApplication1
         {
             services.AddDbContext<Context>(o =>
             {
-                o.UsePresto("Data Source=localhost:8080; Catalog=tpch; Schema=tiny;");
+                o.UsePresto("Data Source=localhost:8080; Catalog=tpch; Schema=tiny;Trino=true");
             });
 
 

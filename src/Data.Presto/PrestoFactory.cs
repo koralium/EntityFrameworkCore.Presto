@@ -7,7 +7,7 @@ namespace Data.Presto
 {
     public class PrestoFactory : DbProviderFactory
     {
-        private PrestoFactory()
+        public PrestoFactory()
         {
         }
 

@@ -21,6 +21,7 @@ namespace Data.Presto
             _isolationLevel = isolationLevel;
         }
 
+
         public override void Commit()
         {
             throw new NotImplementedException();

@@ -76,7 +76,7 @@ namespace Data.Presto
 
         public string GenerateSqlValue()
         {
-            if(DbType == DbType.String)
+            if (DbType == DbType.String)
             {
                 return $"'{Value}'";
             }

@@ -24,6 +24,7 @@ namespace Data.Presto
         private const string StreamingKeyword = "Streaming";
         private const string TrinoKeyword = "Trino";
         private const string PasswordKeyword = "Password";
+        private const string SslKeyword = "Ssl";
 
         private static readonly IReadOnlyList<string> _validKeywords;
         private static readonly IReadOnlyDictionary<string, Keywords> _keywords;
@@ -35,6 +36,7 @@ namespace Data.Presto
         private bool _streaming = true;
         private bool _trino = false;
         private string _password = string.Empty;
+        private bool? _ssl = null;
         private ImmutableList<KeyValuePair<string, string>> _extraCredentials = ImmutableList.Create<KeyValuePair<string, string>>();
 
         private enum Keywords
@@ -46,12 +48,13 @@ namespace Data.Presto
             ExtraCredentials,
             Streaming,
             Trino,
-            Password
+            Password,
+            Ssl,
         }
 
         static PrestoConnectionStringBuilder()
         {
-            var validKeywords = new string[8];
+            var validKeywords = new string[9];
             validKeywords[(int)Keywords.DataSource] = DataSourceKeyword;
             validKeywords[(int)Keywords.User] = UserKeyword;
             validKeywords[(int)Keywords.Catalog] = CatalogKeyword;
@@ -60,9 +63,10 @@ namespace Data.Presto
             validKeywords[(int)Keywords.Streaming] = StreamingKeyword;
             validKeywords[(int)Keywords.Trino] = TrinoKeyword;
             validKeywords[(int)Keywords.Password] = PasswordKeyword;
+            validKeywords[(int)Keywords.Ssl] = SslKeyword;
             _validKeywords = validKeywords;
 
-            _keywords = new Dictionary<string, Keywords>(9, StringComparer.OrdinalIgnoreCase)
+            _keywords = new Dictionary<string, Keywords>(10, StringComparer.OrdinalIgnoreCase)
             {
                 [DataSourceKeyword] = Keywords.DataSource,
                 [DataSourceNoSpaceKeyword] = Keywords.DataSource,
@@ -72,7 +76,8 @@ namespace Data.Presto
                 [ExtraCredentialKeyword] = Keywords.ExtraCredentials,
                 [StreamingKeyword] = Keywords.Streaming,
                 [TrinoKeyword] = Keywords.Trino,
-                [PasswordKeyword] = Keywords.Password
+                [PasswordKeyword] = Keywords.Password,
+                [SslKeyword] = Keywords.Ssl
             };
         }
 
@@ -127,6 +132,12 @@ namespace Data.Presto
         {
             get => _trino;
             set => base[TrinoKeyword] = _trino = value;
+        }
+
+        public virtual bool? Ssl
+        {
+            get => _ssl;
+            set => base[SslKeyword] = _ssl = value;
         }
 
         public virtual string Password
@@ -194,6 +205,9 @@ namespace Data.Presto
                         return;
                     case Keywords.Password:
                         Password = Convert.ToString(value, CultureInfo.InvariantCulture);
+                        return;
+                    case Keywords.Ssl:
+                        Ssl = Convert.ToBoolean(value, CultureInfo.InvariantCulture);
                         return;
                     default:
                         Debug.Assert(false, "Unexpected keyword: " + keyword);
@@ -290,6 +304,8 @@ namespace Data.Presto
                     return Trino;
                 case Keywords.Password:
                     return Password;
+                case Keywords.Ssl:
+                    return Ssl;
                 default:
                     Debug.Assert(false, "Unexpected keyword: " + index);
                     return null;
@@ -328,6 +344,9 @@ namespace Data.Presto
                     return;
                 case Keywords.Password:
                     _password = string.Empty;
+                    return;
+                case Keywords.Ssl:
+                    _ssl = null;
                     return;
                 default:
                     Debug.Assert(false, "Unexpected keyword: " + index);

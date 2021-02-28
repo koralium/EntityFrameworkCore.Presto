@@ -97,6 +97,13 @@ The connection string takes the following parameters:
 | ExtraCredentials | Extra credentials to send.             | ExtraCredentials=key1:value1,key2:value2; |
 | Trino            | Use trino headers (required for trino) | Trino=true;                               |
 | Password         | Password for the user                  | Password=test;                            |
+| Ssl		       | Https or http protocol				 	| Ssl=true;									|			
+
+# SSL Traffic
+
+If the SSL connection string option is left out, the ADO.Net provider tries to figure out the protocol by itself.
+It first tries https but if that fails it tests http. This is saved as long as the application is running.
+But for better first time performance if one is not using https is to set ssl=false in the connection string.
 
 # Nuget Package
 

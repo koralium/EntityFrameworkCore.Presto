@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Data.Presto.Models
+﻿namespace Data.Presto.Models
 {
     enum PrestoState
     {
@@ -10,6 +6,7 @@ namespace Data.Presto.Models
         Planning,
         Starting,
         Running,
+        Finishing,
         Finished,
         Canceled,
         Failed

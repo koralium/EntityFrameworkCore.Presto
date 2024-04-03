@@ -1,33 +1,27 @@
-﻿using Data.Presto.DataReaders;
-using DotNet.Testcontainers.Containers.Builders;
-using DotNet.Testcontainers.Containers.Modules;
-using DotNet.Testcontainers.Containers.OutputConsumers;
-using DotNet.Testcontainers.Containers.WaitStrategies;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Containers;
 
 namespace Data.Presto.Tests
 {
     public class FunctionalTestsBase
     {
-        private TestcontainersContainer testContainer;
+        private IContainer testContainer;
         private MemoryStream memoryStream;
         [OneTimeSetUp]
         public async Task Setup()
         {
             memoryStream = new MemoryStream();
-            var testcontainersBuilder = new TestcontainersBuilder<TestcontainersContainer>()
-              .WithImage("trinodb/trino")
-              .WithName("trino")
-              .WithPortBinding(8080)
-              .WithOutputConsumer(Consume.RedirectStdoutAndStderrToStream(memoryStream, memoryStream))
-              .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged(memoryStream, "======== SERVER STARTED ========"));
-
+            var testcontainersBuilder = new ContainerBuilder()
+                .WithImage("trinodb/trino")
+                .WithName("trino")
+                .WithPortBinding(8080)
+                .WithOutputConsumer(Consume.RedirectStdoutAndStderrToConsole())
+                .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged("======== SERVER STARTED ========"));
             
             testContainer = testcontainersBuilder.Build();
 
@@ -40,7 +34,8 @@ namespace Data.Presto.Tests
             {
 
             }
-            
+            //sometimes just after container starts there is an error "nodes is empty" in streaming tests
+            await Task.Delay(5000);
         }
 
         [OneTimeTearDown]

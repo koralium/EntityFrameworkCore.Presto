@@ -265,6 +265,8 @@ namespace Data.Presto.Utils
                                 return PrestoState.Starting;
                             case "RUNNING":
                                 return PrestoState.Running;
+                            case "FINISHING":
+                                return PrestoState.Finishing;
                             case "FINISHED":
                                 return PrestoState.Finished;
                             case "CANCELED":
